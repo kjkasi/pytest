@@ -1,17 +1,15 @@
-# password_checker.py
-
 import string as st
 
-# Определяем наборы символов
 DIGITS = st.digits
 LOWERCASE = st.ascii_lowercase
 UPPERCASE = st.ascii_uppercase
-SPECIAL = '_!@#$%^&'
+SPECIAL = "_!@#$%^&"
+
 
 def check_password(password: str) -> tuple[bool, str]:
     """
     Проверяет пароль на соответствие требованиям.
-    
+
     Требования:
     - Длина от 8 до 15 символов включительно
     - Обязательно хотя бы один символ из каждого из 4 наборов:
@@ -20,12 +18,11 @@ def check_password(password: str) -> tuple[bool, str]:
         * прописные латинские буквы
         * специальные символы '_!@#$%^&'
     - Пароль может содержать ТОЛЬКО символы из этих 4 наборов
-    
+
     Возвращает кортеж: (валиден_ли, пояснение)
     """
     reasons = []
 
-    # Проверка длины
     if len(password) < 8:
         reasons.append("слишком короткий (менее 8 символов)")
     elif len(password) > 15:
@@ -55,7 +52,9 @@ def check_password(password: str) -> tuple[bool, str]:
                 invalid_chars.append(char)
 
     if invalid_chars:
-        reasons.append(f"содержит запрещённые символы: {', '.join(repr(c) for c in invalid_chars)}")
+        reasons.append(
+            f"содержит запрещённые символы: {', '.join(repr(c) for c in invalid_chars)}"
+        )
 
     if not has_digit:
         reasons.append("нет цифр")
