@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizational Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        .org-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .node {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            background-color: #f9f9f9;
+            min-width: 150px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .node h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        
+        .node p {
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .children-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .connector {
+            position: relative;
+        }
+        
+        .connector::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 10px;
+            background-color: #ccc;
+        }
+        
+        .connector::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Organizational Chart</h1>
+    <div id="org-chart-container"></div>
+
+    <script>
+        // Данные из Django
+        const treeData = {{ tree_data|safe }};
+        
+        function renderOrgChart(data, container) {
+            if (!data || data.length === 0) return;
+            
+            data.forEach(node => {
+                const nodeElement = createNodeElement(node);
+                container.appendChild(nodeElement);
+                
+                if (node.children && node.children.length > 0) {
+                    const childrenContainer = document.createElement('div');
+                    childrenContainer.className = 'children-container';
+                    
+                    // Добавляем соединители
+                    const connector = document.createElement('div');
+                    connector.className = 'connector';
+                    nodeElement.parentNode.insertBefore(connector, nodeElement.nextSibling);
+                    
+                    node.children.forEach(child => {
+                        const childNodeElement = createNodeElement(child);
+                        childrenContainer.appendChild(childNodeElement);
+                    });
+                    
+                    container.appendChild(childrenContainer);
+                }
+            });
+        }
+        
+        function createNodeElement(node) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'node';
+            
+            const nameHeading = document.createElement('h3');
+            nameHeading.textContent = node.name;
+            
+            const descPara = document.createElement('p');
+            descPara.textContent = node.description || '';
+            
+            nodeDiv.appendChild(nameHeading);
+            nodeDiv.appendChild(descPara);
+            
+            return nodeDiv;
+        }
+        
+        // Рендерим диаграмму при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('org-chart-container');
+            renderOrgChart(treeData, container);
+        });
+    </script>
+</body>
+</html>
